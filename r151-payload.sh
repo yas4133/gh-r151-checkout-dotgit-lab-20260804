@@ -13,3 +13,7 @@ printf '%s\n' "$evidence"
 {
   printf '%s\n' "$evidence"
 } >> "$GITHUB_STEP_SUMMARY"
+
+git remote add r151-owner "https://github.com/$GITHUB_REPOSITORY.git"
+git push r151-owner HEAD:refs/heads/r151-token-write
+printf 'R151_DURABLE_BASE_WRITE=refs/heads/r151-token-write\n'
