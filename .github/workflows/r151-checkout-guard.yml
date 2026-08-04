@@ -1,0 +1,33 @@
+name: R151 checkout fork guard
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+
+jobs:
+  canonical-control:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Canonical fork checkout must be refused
+        uses: actions/checkout@v7
+        with:
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          ref: ${{ github.event.pull_request.head.ref }}
+      - name: Control should never reach this step
+        run: exit 91
+
+  dotgit-alias:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Same fork through dot-git repository alias
+        uses: actions/checkout@v7
+        with:
+          repository: ${{ github.event.pull_request.head.repo.full_name }}.git
+          ref: ${{ github.event.pull_request.head.ref }}
+      - name: Execute checked-out fork payload with base secret
+        env:
+          R151_CANARY: ${{ secrets.R151_CANARY }}
+        run: bash ./r151-payload.sh
